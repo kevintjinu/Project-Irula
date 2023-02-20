@@ -152,7 +152,8 @@ const Irula = () => {
       <Modal
         visible={modalVisible}
         animationType="slide"
-        onRequestClose={() => setModalVisible(false)}      >
+        onRequestClose={() => setModalVisible(false)}
+      >
         <View
           style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
         >
