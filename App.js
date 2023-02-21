@@ -1,4 +1,5 @@
 import { StatusBar } from "expo-status-bar";
+
 import React, { useState, useEffect } from "react";
 import {
   StyleSheet,
@@ -8,12 +9,13 @@ import {
   Image,
   TouchableOpacity,
   Modal,
-  TextInput,
+  TextInput, Platform,PermissionsAndroid
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
-// import * as Speech from "expo-speech";
-// import Voice from "react-native-voice";
+import * as Speech from 'expo-speech';
+import Voice from 'react-native-voice';
+// import Voice from '@react-native-community/voice';
 
 const Irula = () => {
   const [data, setData] = useState([]);
@@ -58,7 +60,7 @@ const Irula = () => {
   //   setIsRecording(true);
 
   //   try {
-  //     await Voice.start("en-US");
+  //     await Voice.start('en-US');
   //   } catch (error) {
   //     console.log(error);
   //   }
@@ -90,6 +92,74 @@ const Irula = () => {
   //     }
   //   }
   // };
+  const requestAudioPermission = async () => {
+    if (Platform.OS === 'android') {
+      try {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          {
+            title: 'Audio Permission',
+            message: 'App needs access to your microphone to enable voice search.',
+            buttonPositive: 'OK',
+          },
+        );
+        if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+          console.log('Audio permission granted');
+          return true;
+        } else {
+          console.log('Audio permission denied');
+          return false;
+        }
+      } catch (err) {
+        console.warn(err);
+        return false;
+      }
+    }
+    return true;
+  };
+  
+  const startRecording = async () => {
+    setIsRecording(true);
+    const audioPermission = await requestAudioPermission();
+  
+    if (audioPermission) {
+      try {
+        await Voice.start('en-US');
+        Voice.onSpeechResults = onSpeechResults;
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+  
+  const stopRecording = async () => {
+    setIsRecording(false);
+  
+    try {
+      await Voice.stop();
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+  const onSpeechResults = (event) => {
+    const result = event.value[0];
+    setSearchText(result);
+    handleSearch(result);
+  };
+  
+  const handleVoiceSearch = async () => {
+    const { status } = await Permissions.askAsync(Permissions.AUDIO_RECORDING);
+    if (status === 'granted') {
+      console.log('permission granted');
+      const result = await Speech.recognizeAsync({ language: "en-US" });
+      if (result.status === "final") {
+        setSearchTerm(result.transcription);
+        handleSearch();
+      }
+    }
+  };
+  
 
   const renderItem = ({ item }) => (
     <TouchableOpacity
@@ -139,9 +209,10 @@ const Irula = () => {
         <TouchableOpacity onPress={handleSearch}>
           <Ionicons name="search" size={24} color="black" />
         </TouchableOpacity>
-        {/* <TouchableOpacity onPress={handleVoiceSearch}>
-          <Ionicons name="mic" size={24} color="black" />
-        </TouchableOpacity> */}
+        <TouchableOpacity onPress={isRecording ? stopRecording : startRecording}>
+  <Ionicons name="mic" size={24} color={isRecording ? "red" : "black"} />
+</TouchableOpacity>
+
       </View>
 
       <FlatList
