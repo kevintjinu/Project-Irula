@@ -24,6 +24,7 @@ const Irula = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isRecording, setIsRecording] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     axios
@@ -52,8 +53,13 @@ const Irula = () => {
     });
     setFilteredData(filtered);
     setSearchText(text);
+    setIsFocused(true);
   };
-
+  const handleClearSearch = () => {
+    setSearchText('');
+    setIsFocused(false);
+    setFilteredData(data);
+  };
   // const startRecording = async () => {
   //   setIsRecording(true);
 
@@ -134,8 +140,15 @@ const Irula = () => {
           style={styles.searchInput}
           value={searchText}
           onChangeText={handleSearch}
+          onFocus={() => setIsFocused(true)}
+  onBlur={() => setIsFocused(false)}
           placeholder="Search words"
         />
+        {isFocused && (
+  <TouchableOpacity onPress={handleClearSearch}>
+    <Ionicons name="close" size={24} color="black" />
+  </TouchableOpacity>
+)}
         <TouchableOpacity onPress={handleSearch}>
           <Ionicons name="search" size={24} color="black" />
         </TouchableOpacity>
