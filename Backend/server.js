@@ -1,15 +1,8 @@
-const express = require('express');
-const fs = require('fs');
-const app = express();
+const http = require("http");
+const app = require("./app");
 
-const jsonData = JSON.parse(fs.readFileSync('csvjson.json', 'utf-8'));
+const port = process.env.PORT || 3000;
 
-app.get('/data', (req, res) => {
-  res.json(jsonData);
-});
+const server = http.createServer(app);
 
-app.listen(3000, () => {
-  console.log('Server listening on port 3000');
-});
- 
-         
+server.listen(port);
