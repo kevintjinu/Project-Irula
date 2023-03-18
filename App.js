@@ -15,7 +15,7 @@ import {
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 // import * as Speech from "expo-speech";
-// import Voice from "react-native-voice";
+
 
 const Irula = () => {
   const [data, setData] = useState([]);
@@ -36,6 +36,7 @@ const Irula = () => {
     // setLoading(true);
     axios
       .get("https://retoolapi.dev/2BDr23/data")
+      // .get("https://retoolapi.dev/2BDr23/data")
       .then((response) => {
         setData(response.data);
         setFilteredData(response.data);
