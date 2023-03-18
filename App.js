@@ -35,8 +35,8 @@ const Irula = () => {
   const fetchData = () => {
     // setLoading(true);
     axios
-      .get("https://retoolapi.dev/2BDr23/data")
       // .get("https://retoolapi.dev/2BDr23/data")
+       .get("https://project-irula.azurewebsites.net/api/")
       .then((response) => {
         setData(response.data);
         setFilteredData(response.data);
@@ -69,11 +69,17 @@ const Irula = () => {
     }
 
     const filtered = data.filter((item) => {
+
       return (
-        (item.word && item.word.toLowerCase().includes(text.toLowerCase())) ||
-        (item.tamilword &&
-          item.tamilword.toLowerCase().includes(text.toLowerCase()))
+        (item.enWord && item.enWord.toLowerCase().includes(text.toLowerCase())) ||
+        (item.taWord &&
+          item.taWord.toLowerCase().includes(text.toLowerCase()))
       );
+      // return (
+      //   (item.word && item.word.toLowerCase().includes(text.toLowerCase())) ||
+      //   (item.tamilword &&
+      //     item.tamilword.toLowerCase().includes(text.toLowerCase()))
+      // );
     });
     setFilteredData(filtered);
     setSearchText(text);
@@ -92,8 +98,8 @@ const Irula = () => {
         flexDirection: "row",
         padding: 16,
         alignItems: "center",
-        marginTop: 30,
-        margin: 20,
+      //  marginTop: 30,
+        margin: 16,
         backgroundColor: "white",
         borderRadius: 20,
         padding: 15,
@@ -117,24 +123,28 @@ const Irula = () => {
             fontWeight: "bold",
           }}
         >
-          {item.word}
+          {/* {item.word} */}
+          {item.enWord}
         </Text>
         <Text style={{ fontSize: 12, color: "green", marginBottom: 7 }}>
-          {item.tamilword}
+          {/* {item.tamilword} */}
+          {item.taWord}
         </Text>
         <Text
           numberOfLines={2}
           ellipsizeMode="tail"
           style={{ fontSize: 10, color: "#284387", marginBottom: 7 }}
         >
-          {item.endefinition}
+          {/* {item.endefinition} */}
+          {item.enMeaning}
         </Text>
         <Text
           numberOfLines={2}
           ellipsizeMode="tail"
           style={{ fontSize: 10, color: "green", marginBottom: 7 }}
         >
-          {item.tamildefinition}
+          {/* {item.tamildefinition} */}
+          {item.taMeaning}
         </Text>
       </View>
     </TouchableOpacity>
@@ -155,7 +165,13 @@ const Irula = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.MainContainer}>
-        <StatusBar style="auto" />
+        <StatusBar style="auto" backgroundColor="#284387" />
+        <View style={styles.logoContainer}>
+          <Text style={{fontSize:20,fontWeight:'bold',color:'white',marginBottom: 20,}}>
+            LearnIrula
+          </Text>
+      {/* <Image source={require('./assets/Logo.png')} style={styles.logo} /> */}
+    </View>
         <View style={styles.searchContainer}>
           <TextInput
             style={styles.searchInput}
@@ -179,6 +195,7 @@ const Irula = () => {
             data={filteredData}
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
+            scrollIndicatorInsets={{ color: 'white' }}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -223,7 +240,8 @@ const Irula = () => {
                       textAlign: "center",
                     }}
                   >
-                    {selectedItem ? selectedItem.tamilword : ""}
+                    {/* {selectedItem ? selectedItem.tamilword : ""} */}
+                    {selectedItem ? selectedItem.taWord : ""}
                   </Text>
                 </View>
 
@@ -236,7 +254,8 @@ const Irula = () => {
                       textAlign: "center",
                     }}
                   >
-                    {selectedItem ? selectedItem.word : ""}
+                    {/* {selectedItem ? selectedItem.word : ""} */}
+                    {selectedItem ? selectedItem.enWord : ""}
                   </Text>
                 </View>
               </View>
@@ -263,7 +282,8 @@ const Irula = () => {
                         fontSize: 14,
                       }}
                     >
-                      {selectedItem ? selectedItem.tamildefinition : ""}
+                      {/* {selectedItem ? selectedItem.tamildefinition : ""} */}
+                      {selectedItem ? selectedItem.taMeaning : ""}
                     </Text>
                   </View>
 
@@ -274,7 +294,8 @@ const Irula = () => {
                         fontSize: 14,
                       }}
                     >
-                      {selectedItem ? selectedItem.endefinition : ""}
+                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                      {selectedItem ? selectedItem.enMeaning : ""}
                     </Text>
                   </View>
                 </View>
@@ -389,6 +410,14 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: 20,
+  },
+  logoContainer: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  logo: {
+    // width: 100,
+    // height: 100,
   },
 });
 
