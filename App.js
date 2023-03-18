@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  SafeAreaView,RefreshControl
+  SafeAreaView,
+  RefreshControl,
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
@@ -138,13 +139,13 @@ const Irula = () => {
     </TouchableOpacity>
   );
 
-//   if (loading) {
-//     return <View style={{flex: 1,
-//       backgroundColor: "#284387",justifyContent:'center'}}>
-// <Text style={{color:'white',textAlign:"center"}}>Loading...</Text>
-//     </View>;
-    
-//   }
+  //   if (loading) {
+  //     return <View style={{flex: 1,
+  //       backgroundColor: "#284387",justifyContent:'center'}}>
+  // <Text style={{color:'white',textAlign:"center"}}>Loading...</Text>
+  //     </View>;
+
+  //   }
   const handleRefresh = () => {
     setRefreshing(true);
     fetchData();
@@ -210,43 +211,33 @@ const Irula = () => {
                 <Ionicons name="close-circle-outline" size={70} color="white" />
               </TouchableOpacity>
             </View>
-            <View
-              style={styles.modalContainer}
-            >
-              <View
-                style={styles.titleContainer}
-              >
-                
-                  <View
-                    style={styles.wordtileContainer}
+            <View style={styles.modalContainer}>
+              <View style={styles.titleContainer}>
+                <View style={styles.wordtileContainer}>
+                  <Text
+                    style={{
+                      color: "green",
+                      fontSize: 16,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                    }}
                   >
-                    <Text
-                      style={{
-                        color: "green",
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        textAlign: "center",
-                      }}
-                    >
-                      {selectedItem ? selectedItem.tamilword : ""}
-                    </Text>
-                  </View>
-               
-                  <View
-                    style={styles.wordtileContainer}
+                    {selectedItem ? selectedItem.tamilword : ""}
+                  </Text>
+                </View>
+
+                <View style={styles.wordtileContainer}>
+                  <Text
+                    style={{
+                      color: "#284387",
+                      fontSize: 16,
+                      fontWeight: "bold",
+                      textAlign: "center",
+                    }}
                   >
-                    <Text
-                      style={{
-                        color: "#284387",
-                        fontSize: 16,
-                        fontWeight: "bold",
-                        textAlign: "center",
-                      }}
-                    >
-                      {selectedItem ? selectedItem.word : ""}
-                    </Text>
-                  </View>
-               
+                    {selectedItem ? selectedItem.word : ""}
+                  </Text>
+                </View>
               </View>
               <View
                 style={{
@@ -264,9 +255,7 @@ const Irula = () => {
                     justifyContent: "space-around",
                   }}
                 >
-                  <View
-                    style={styles.definitionContainer}
-                  >
+                  <View style={styles.definitionContainer}>
                     <Text
                       style={{
                         color: "green",
@@ -277,9 +266,7 @@ const Irula = () => {
                     </Text>
                   </View>
 
-                  <View
-                    style={styles.definitionContainer}
-                  >
+                  <View style={styles.definitionContainer}>
                     <Text
                       style={{
                         color: "#284387",
@@ -371,37 +358,37 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     margin: 24,
   },
-  definitionContainer:{
+  definitionContainer: {
     borderWidth: 1,
-                      borderColor: "#FFF",
-                      borderRadius: 8,
-                      padding: 5,
-                      width: "78%",
-                      backgroundColor: "#FFF",
+    borderColor: "#FFF",
+    borderRadius: 8,
+    padding: 5,
+    width: "78%",
+    backgroundColor: "#FFF",
   },
-  wordtileContainer:{
+  wordtileContainer: {
     borderWidth: 1,
     borderColor: "#FFF",
     borderRadius: 8,
     padding: 5,
     width: "48%",
-                    borderRadius: 8,
-                    backgroundColor: "#FFF",
+    borderRadius: 8,
+    backgroundColor: "#FFF",
   },
-  modalContainer:{
+  modalContainer: {
     height: "55%",
-                backgroundColor: "#284387",
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-                paddingHorizontal: 25,
-                paddingVertical: 15,
+    backgroundColor: "#284387",
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    paddingHorizontal: 25,
+    paddingVertical: 15,
   },
-  titleContainer:{
+  titleContainer: {
     width: "100%",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginTop: 20,
-  }
+    flexDirection: "row",
+    justifyContent: "space-between",
+    marginTop: 20,
+  },
 });
 
 export default Irula;
