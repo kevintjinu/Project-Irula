@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   Modal,
   TextInput,
-  SafeAreaView,
+  SafeAreaView,RefreshControl
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
@@ -18,7 +18,7 @@ import { Ionicons } from "@expo/vector-icons";
 
 const Irula = () => {
   const [data, setData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   // const [searchTerm, setSearchTerm] = useState("");
@@ -26,19 +26,40 @@ const Irula = () => {
   const [searchText, setSearchText] = useState("");
   // const [isRecording, setIsRecording] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
+    fetchData();
+  }, []);
+  const fetchData = () => {
+    // setLoading(true);
     axios
       .get("https://retoolapi.dev/2BDr23/data")
       .then((response) => {
         setData(response.data);
         setFilteredData(response.data);
-        setLoading(false);
+        // setLoading(false);
+        setRefreshing(false);
       })
       .catch((error) => {
         console.error(error);
+        // setLoading(false);
+        setRefreshing(false);
       });
-  }, []);
+  };
+
+  // useEffect(() => {
+  //   axios
+  //     .get("https://retoolapi.dev/2BDr23/data")
+  //     .then((response) => {
+  //       setData(response.data);
+  //       setFilteredData(response.data);
+  //       setLoading(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //     });
+  // }, []);
 
   const handleSearch = (text) => {
     if (typeof text !== "string") {
@@ -117,9 +138,17 @@ const Irula = () => {
     </TouchableOpacity>
   );
 
-  if (loading) {
-    return <Text>Loading...</Text>;
-  }
+//   if (loading) {
+//     return <View style={{flex: 1,
+//       backgroundColor: "#284387",justifyContent:'center'}}>
+// <Text style={{color:'white',textAlign:"center"}}>Loading...</Text>
+//     </View>;
+    
+//   }
+  const handleRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -148,6 +177,16 @@ const Irula = () => {
             data={filteredData}
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
+            refreshControl={
+              <RefreshControl
+                refreshing={refreshing}
+                onRefresh={handleRefresh}
+                colors={["#9Bd35A", "#689F38"]}
+                tintColor="#FFF"
+                title="Loading..."
+                titleColor="#FFF"
+              />
+            }
           />
         </View>
 
@@ -172,37 +211,14 @@ const Irula = () => {
               </TouchableOpacity>
             </View>
             <View
-              style={{
-                height: "55%",
-                backgroundColor: "#284387",
-                borderTopLeftRadius: 20,
-                borderTopRightRadius: 20,
-                paddingHorizontal: 25,
-                paddingVertical: 15,
-              }}
+              style={styles.modalContainer}
             >
               <View
-                style={{
-                  width: "100%",
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                  marginTop: 20,
-                }}
+                style={styles.titleContainer}
               >
-                <View
-                  style={{
-                    width: "48%",
-                    borderRadius: 8,
-                    backgroundColor: "#FFF",
-                  }}
-                >
+                
                   <View
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#FFF",
-                      borderRadius: 8,
-                      padding: 5,
-                    }}
+                    style={styles.wordtileContainer}
                   >
                     <Text
                       style={{
@@ -215,23 +231,9 @@ const Irula = () => {
                       {selectedItem ? selectedItem.tamilword : ""}
                     </Text>
                   </View>
-                </View>
-                <View
-                  style={{
-                    width: "48%",
-                    borderRadius: 8,
-                    backgroundColor: "#FFF",
-
-                    marginLeft: "4%",
-                  }}
-                >
+               
                   <View
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#FFF",
-                      borderRadius: 8,
-                      padding: 5,
-                    }}
+                    style={styles.wordtileContainer}
                   >
                     <Text
                       style={{
@@ -244,7 +246,7 @@ const Irula = () => {
                       {selectedItem ? selectedItem.word : ""}
                     </Text>
                   </View>
-                </View>
+               
               </View>
               <View
                 style={{
@@ -259,19 +261,11 @@ const Irula = () => {
                   style={{
                     flex: 1,
                     flexDirection: "column",
-                    justifyContent: "space-between",
+                    justifyContent: "space-around",
                   }}
                 >
                   <View
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#FFF",
-                      borderRadius: 8,
-                      padding: 5,
-                      width: "78%",
-                      backgroundColor: "#FFF",
-                      paddingVertical: 10,
-                    }}
+                    style={styles.definitionContainer}
                   >
                     <Text
                       style={{
@@ -284,15 +278,7 @@ const Irula = () => {
                   </View>
 
                   <View
-                    style={{
-                      borderWidth: 1,
-                      borderColor: "#FFF",
-                      borderRadius: 8,
-                      padding: 5,
-                      marginTop: 10,
-                      width: "78%",
-                      backgroundColor: "#FFF",
-                    }}
+                    style={styles.definitionContainer}
                   >
                     <Text
                       style={{
@@ -385,6 +371,37 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     margin: 24,
   },
+  definitionContainer:{
+    borderWidth: 1,
+                      borderColor: "#FFF",
+                      borderRadius: 8,
+                      padding: 5,
+                      width: "78%",
+                      backgroundColor: "#FFF",
+  },
+  wordtileContainer:{
+    borderWidth: 1,
+    borderColor: "#FFF",
+    borderRadius: 8,
+    padding: 5,
+    width: "48%",
+                    borderRadius: 8,
+                    backgroundColor: "#FFF",
+  },
+  modalContainer:{
+    height: "55%",
+                backgroundColor: "#284387",
+                borderTopLeftRadius: 20,
+                borderTopRightRadius: 20,
+                paddingHorizontal: 25,
+                paddingVertical: 15,
+  },
+  titleContainer:{
+    width: "100%",
+                  flexDirection: "row",
+                  justifyContent: "space-between",
+                  marginTop: 20,
+  }
 });
 
 export default Irula;
