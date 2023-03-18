@@ -21,10 +21,10 @@ const Irula = () => {
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
-  const [searchTerm, setSearchTerm] = useState("");
+  // const [searchTerm, setSearchTerm] = useState("");
   const [filteredData, setFilteredData] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const [isRecording, setIsRecording] = useState(false);
+  // const [isRecording, setIsRecording] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
@@ -61,53 +61,7 @@ const Irula = () => {
     setIsFocused(false);
     setFilteredData(data);
   };
-  // const startRecording = async () => {
-  //   setIsRecording(true);
 
-  //   try {
-  //     await Voice.start("en-US");
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // const stopRecording = async () => {
-  //   setIsRecording(false);
-
-  //   try {
-  //     await Voice.stop();
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // };
-
-  // const onSpeechResults = (event) => {
-  //   const result = event.value[0];
-  //   setSearchText(result);
-  //   handleSearch(result);
-  // };
-
-  // const handleVoiceSearch = async () => {
-  //   const { status } = await Speech.requestPermissionsAsync();
-  //   if (status === "granted") {
-  //     const result = await Speech.recognizeAsync({ language: "en-US" });
-  //     if (result.status === "final") {
-  //       setSearchTerm(result.transcription);
-  //       handleSearch();
-  //     }
-  //   }
-  // };
-  // const Separator = () => {
-  //   return (
-  //     <View
-  //       style={{
-  //         height: 1,
-  //         width: '100%',
-  //         backgroundColor: 'black',
-  //       }}
-  //     />
-  //   );
-  // };
   const renderItem = ({ item }) => (
     <TouchableOpacity
       style={{
@@ -188,16 +142,14 @@ const Irula = () => {
           <TouchableOpacity onPress={handleSearch}>
             <Ionicons name="search" size={24} color="black" />
           </TouchableOpacity>
-          {/* <TouchableOpacity onPress={handleVoiceSearch}>
-          <Ionicons name="mic" size={24} color="black" />
-        </TouchableOpacity> */}
+        
         </View>
         <View style={styles.flatlistContainer}>
           <FlatList
             data={filteredData}
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
-            // ItemSeparatorComponent={Separator}
+            
           />
         </View>
 
@@ -296,13 +248,11 @@ const Irula = () => {
               </View>
 <View
 style={{
-                  // width: 310,
-                  // height: 238,
+                  
                   flexDirection: "row",
-                  // paddingHorizontal: 25,
-                  // padding: 10,
+                
                   justifyContent: "space-evenly",
-                  // alignItems: "center",
+               
                   marginTop: 23,
                 }}>
                 <View style={{flex:1,flexDirection:'column',justifyContent: "space-between",}}>
@@ -350,14 +300,13 @@ style={{
                   </View>
 
                   </View>
-                {/* <View style={{ width: 10, backgroundColor:'green'}} /> */}
+              
                 <View
                   style={{
                     width: 128,
                     height: 238,
                     borderRadius: 8,
-                  //  backgroundColor:'green',
-                    // overflow: "hidden" ,
+               
                   }}
                 >
                   <Image
