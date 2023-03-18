@@ -142,14 +142,12 @@ const Irula = () => {
           <TouchableOpacity onPress={handleSearch}>
             <Ionicons name="search" size={24} color="black" />
           </TouchableOpacity>
-        
         </View>
         <View style={styles.flatlistContainer}>
           <FlatList
             data={filteredData}
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
-            
           />
         </View>
 
@@ -160,7 +158,7 @@ const Irula = () => {
           onRequestClose={() => setModalVisible(false)}
           backdropOpacity={0.3}
         >
-          <View style={{ flex: 1, backgroundColor: "#000000aa"}}>
+          <View style={{ flex: 1, backgroundColor: "#000000aa" }}>
             <View style={{ flex: 1, backgroundColor: "transparent" }} />
             <View
               style={{
@@ -196,7 +194,6 @@ const Irula = () => {
                     width: "48%",
                     borderRadius: 8,
                     backgroundColor: "#FFF",
-                    
                   }}
                 >
                   <View
@@ -211,7 +208,8 @@ const Irula = () => {
                       style={{
                         color: "green",
                         fontSize: 16,
-                        fontWeight:'bold',textAlign:'center'
+                        fontWeight: "bold",
+                        textAlign: "center",
                       }}
                     >
                       {selectedItem ? selectedItem.tamilword : ""}
@@ -223,7 +221,7 @@ const Irula = () => {
                     width: "48%",
                     borderRadius: 8,
                     backgroundColor: "#FFF",
-                    
+
                     marginLeft: "4%",
                   }}
                 >
@@ -238,7 +236,9 @@ const Irula = () => {
                     <Text
                       style={{
                         color: "#284387",
-                        fontSize: 16,fontWeight:'bold',textAlign:'center'
+                        fontSize: 16,
+                        fontWeight: "bold",
+                        textAlign: "center",
                       }}
                     >
                       {selectedItem ? selectedItem.word : ""}
@@ -246,25 +246,31 @@ const Irula = () => {
                   </View>
                 </View>
               </View>
-<View
-style={{
-                  
+              <View
+                style={{
                   flexDirection: "row",
-                
+
                   justifyContent: "space-evenly",
-               
+
                   marginTop: 23,
-                }}>
-                <View style={{flex:1,flexDirection:'column',justifyContent: "space-between",}}>
-                  
-               
+                }}
+              >
                 <View
+                  style={{
+                    flex: 1,
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                  }}
+                >
+                  <View
                     style={{
                       borderWidth: 1,
                       borderColor: "#FFF",
                       borderRadius: 8,
                       padding: 5,
-                      width:"78%",backgroundColor: "#FFF",paddingVertical:10
+                      width: "78%",
+                      backgroundColor: "#FFF",
+                      paddingVertical: 10,
                     }}
                   >
                     <Text
@@ -275,9 +281,7 @@ style={{
                     >
                       {selectedItem ? selectedItem.tamildefinition : ""}
                     </Text>
-                    
                   </View>
-
 
                   <View
                     style={{
@@ -285,7 +289,9 @@ style={{
                       borderColor: "#FFF",
                       borderRadius: 8,
                       padding: 5,
-                      marginTop: 10,width:"78%",backgroundColor: "#FFF",
+                      marginTop: 10,
+                      width: "78%",
+                      backgroundColor: "#FFF",
                     }}
                   >
                     <Text
@@ -296,17 +302,14 @@ style={{
                     >
                       {selectedItem ? selectedItem.endefinition : ""}
                     </Text>
-                    
                   </View>
+                </View>
 
-                  </View>
-              
                 <View
                   style={{
                     width: 128,
                     height: 238,
                     borderRadius: 8,
-               
                   }}
                 >
                   <Image
@@ -314,22 +317,23 @@ style={{
                     source={require("./assets/Picture.png")}
                   />
                 </View>
-</View>
-<TouchableOpacity style={{ flex:1,
-    marginTop: 20 }}>
-    <Text style={{ 
-      fontSize: 24,
-      padding: 10,
-      borderWidth: 2,
-      borderColor: "white",
-      backgroundColor: "#4B639D",
-      color: "white",
-      borderRadius: 10,textAlign:'center'
-    }}>
-        Hear this word 
-    </Text>
-  </TouchableOpacity>
-
+              </View>
+              <TouchableOpacity style={{ flex: 1, marginTop: 20 }}>
+                <Text
+                  style={{
+                    fontSize: 24,
+                    padding: 10,
+                    borderWidth: 2,
+                    borderColor: "white",
+                    backgroundColor: "#4B639D",
+                    color: "white",
+                    borderRadius: 10,
+                    textAlign: "center",
+                  }}
+                >
+                  Hear this word
+                </Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
