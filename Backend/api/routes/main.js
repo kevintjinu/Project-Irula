@@ -57,13 +57,13 @@ router.get("/search/:wordName", (req, res, next) => {
   Word.find({
     $or: [
       {
-        en_word: {
+        enWord: {
           $regex: searchTerm,
           $options: "xi",
         },
       },
       {
-        ta_word: {
+        taWord: {
           $regex: searchTerm,
           $options: "xi",
         },
@@ -84,14 +84,15 @@ router.get("/search/:wordName", (req, res, next) => {
 router.post("/newWord", (req, res, next) => {
   const word = new Word({
     _id: new mongoose.Types.ObjectId(),
-    lexical_unit: req.body.lexical_unit,
-    audio_path: req.body.audio_path,
-    picture_path: req.body.picture_path,
-    grammatical_info: req.body.grammatical_info,
-    en_word: req.body.en_word,
-    ta_word: req.body.ta_word,
-    en_meaning: req.body.en_meaning,
-    ta_meaning: req.body.ta_meaning,
+    lexicalUnit: req.body.lexicalUnit,
+    audioPath: req.body.audioPath,
+    picturePath: req.body.picturePath,
+    grammaticalInfo: req.body.grammaticalInfo,
+    enWord: req.body.enWord,
+    irulaWord: req.body.irulaWord,
+    taWord: req.body.taWord,
+    enMeaning: req.body.enMeaning,
+    taMeaning: req.body.taMeaning,
   });
 
   word
@@ -129,6 +130,28 @@ router.post("/newUser", (req, res, next) => {
         message: "Object created.",
         obj: result,
       });
+    })
+    .catch((err) => {
+      console.log(err);
+      res.status(500).json(err);
+    });
+});
+
+router.post("/update/:wordName", (req, res, next) => {
+  const wordName = req.params.wordName;
+
+  Word.updateOne(
+    {
+      enWord: wordName,
+    },
+    {
+      $set: req.body,
+    }
+  )
+    .exec()
+    .then((result) => {
+      console.log(result);
+      res.status(200).json(result);
     })
     .catch((err) => {
       console.log(err);
