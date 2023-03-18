@@ -287,7 +287,7 @@ const Irula = () => {
                 >
                   <Image
                     style={{ width: 128, height: 238, borderRadius: 8 }}
-                    source={require("./assets/Picture.png")}
+                    source={require("./assets/pictures/fire.png")}
                   />
                 </View>
               </View>
