@@ -165,7 +165,7 @@ const Wordslist = () => {
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={styles.MainContainer}>
-        <StatusBar style="auto" backgroundColor="#284387" />
+        <StatusBar style="light" backgroundColor="#284387" />
         {/* <View style={styles.logoContainer}> */}
           {/* <Text style={{fontSize:20,fontWeight:'bold',color:'white',marginBottom: 20,}}>
             LearnIrula

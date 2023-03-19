@@ -1,8 +1,8 @@
-import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
-import BottomTabs from './BottomTab';
-import Wordslist from '.././Wordslist';
-import Search from '.././search';
+import React from "react";
+import { createStackNavigator } from "@react-navigation/stack";
+import BottomTabs from "./BottomTab";
+import Wordslist from "../Wordslist";
+import Search from "../search";
 
 const Stack = createStackNavigator();
 
