@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -10,7 +10,7 @@ import {
   Modal,
   TextInput,
   SafeAreaView,
-  RefreshControl,
+  RefreshControl,PanResponder
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
@@ -28,6 +28,7 @@ const Wordslist = () => {
   // const [isRecording, setIsRecording] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
+  const searchInput = useRef(null);
 
   useEffect(() => {
     fetchData();
@@ -50,18 +51,17 @@ const Wordslist = () => {
       });
   };
 
-  // useEffect(() => {
-  //   axios
-  //     .get("https://retoolapi.dev/2BDr23/data")
-  //     .then((response) => {
-  //       setData(response.data);
-  //       setFilteredData(response.data);
-  //       setLoading(false);
-  //     })
-  //     .catch((error) => {
-  //       console.error(error);
-  //     });
-  // }, []);
+  const panResponder = useRef(
+    PanResponder.create({
+      onMoveShouldSetPanResponder: (evt, gestureState) => {
+        const { dx, dy } = gestureState;
+        return dy > 0 && dy > dx && dy > 20;
+      },
+      onPanResponderRelease: () => {
+        searchInput.current.focus();
+      },
+    })
+  ).current;
 
   const handleSearch = (text) => {
     if (typeof text !== "string") {
@@ -164,7 +164,10 @@ const Wordslist = () => {
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
-      <View style={styles.MainContainer}>
+      
+      <View style={styles.MainContainer}
+      // {...panResponder.panHandlers}
+      >
         <StatusBar style="light" backgroundColor="#284387" />
         {/* <View style={styles.logoContainer}> */}
           {/* <Text style={{fontSize:20,fontWeight:'bold',color:'white',marginBottom: 20,}}>
@@ -174,6 +177,7 @@ const Wordslist = () => {
     {/* </View> */}
         <View style={styles.searchContainer}>
           <TextInput
+          ref={searchInput}
             style={styles.searchInput}
             value={searchText}
             onChangeText={handleSearch}
@@ -196,6 +200,7 @@ const Wordslist = () => {
             renderItem={renderItem}
             keyExtractor={(item, index) => index.toString()}
             scrollIndicatorInsets={{ color: 'white' }}
+            
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
@@ -265,7 +270,7 @@ const Wordslist = () => {
 
                   justifyContent: "space-evenly",
 
-                  marginTop: 23,
+                  marginTop: 23,height:320
                 }}
               >
                 <View
@@ -308,6 +313,7 @@ const Wordslist = () => {
                   }}
                 >
                   <Image
+                  
                     style={{ width: 128, height: 238, borderRadius: 8 }}
                     source={require("../assets/pictures/fire.png")}
                   />
@@ -398,7 +404,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   modalContainer: {
-    height: "55%",
+    height: "62%",
     backgroundColor: "#284387",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
