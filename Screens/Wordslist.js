@@ -15,6 +15,8 @@ import {
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
+import { Audio } from 'expo-av';
+
 // import * as Speech from "expo-speech";
 
 
@@ -359,7 +361,17 @@ const Wordslist = () => {
                   />
                 </View>
               </View>
-              <TouchableOpacity style={{ flex: 1, marginTop: 20 }}>
+              <TouchableOpacity style={{ flex: 1, marginTop: 20 }}
+              onPress={async () => {
+                const soundObject = new Audio.Sound();
+                try {
+                  await soundObject.loadAsync(require('../assets/audio/fire.mp3'));
+                  await soundObject.playAsync();
+                } catch (error) {
+                  console.error('Error playing sound:', error);
+                }
+              }}
+              >
                 <Text
                   style={{
                     fontSize: 24,
