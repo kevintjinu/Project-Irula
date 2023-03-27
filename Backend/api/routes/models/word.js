@@ -6,7 +6,7 @@ const wordSchema = mongoose.Schema({
   audioPath: String,
   picturePath: String,
   grammaticalInfo: String,
-  enWord: String,
+  enWord: {type: String, unique: true},
   irulaWord: String,
   taWord: String,
   enMeaning: String,
@@ -14,3 +14,4 @@ const wordSchema = mongoose.Schema({
 });
 
 module.exports = mongoose.model("Word", wordSchema);
+

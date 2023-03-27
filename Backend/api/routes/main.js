@@ -36,7 +36,7 @@ router.get("/", (req, res, next) => {
     });
 });
 
-router.get("/:userId", (req, res, next) => {
+router.get("/user/:userId", (req, res, next) => {
   const userId = req.params.userId;
 
   User.findById(userId)
@@ -81,6 +81,12 @@ router.get("/search/:wordName", (req, res, next) => {
     });
 });
 
+router.get("/teapot", (req, res, next) => {
+  res.status(418).json({
+    message: "You tried brewing coffee in a teapot. Try some other route.",
+  });
+});
+
 router.post("/newWord", (req, res, next) => {
   const word = new Word({
     _id: new mongoose.Types.ObjectId(),
@@ -99,7 +105,7 @@ router.post("/newWord", (req, res, next) => {
     .save()
     .then((result) => {
       console.log(result);
-      res.status(200).json({
+      res.status(201).json({
         message: "object created successfully.",
         createdObj: word,
       });
@@ -126,7 +132,7 @@ router.post("/newUser", (req, res, next) => {
     .save()
     .then((result) => {
       console.log(result);
-      res.status(200).json({
+      res.status(201).json({
         message: "Object created.",
         obj: result,
       });
