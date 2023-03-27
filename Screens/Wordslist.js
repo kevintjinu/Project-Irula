@@ -10,10 +10,11 @@ import {
   Modal,
   TextInput,
   SafeAreaView,
-  RefreshControl,PanResponder
+  RefreshControl,PanResponder, Keyboard
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
+import { ScrollView } from "react-native-gesture-handler";
 // import * as Speech from "expo-speech";
 
 
@@ -30,10 +31,12 @@ const Wordslist = () => {
   const [refreshing, setRefreshing] = useState(false);
   const searchInput = useRef(null);
 
+  
   useEffect(() => {
     fetchData();
   }, []);
   const fetchData = () => {
+    
     // setLoading(true);
     axios
       // .get("https://retoolapi.dev/2BDr23/data")
@@ -89,6 +92,7 @@ const Wordslist = () => {
     setSearchText("");
     setIsFocused(false);
     setFilteredData(data);
+    Keyboard.dismiss();
   };
 
   const renderItem = ({ item }) => (
@@ -184,28 +188,31 @@ const Wordslist = () => {
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder="Search..."
+            placeholderTextColor="#284387" 
           />
           {isFocused && (
             <TouchableOpacity onPress={handleClearSearch}>
-              <Ionicons name="close" size={24} color="black" />
+              <Ionicons name="close" size={24} color="#284387" />
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={handleSearch}>
-            <Ionicons name="search" size={24} color="black" />
+            <Ionicons name="search" size={24} color="#284387" />
           </TouchableOpacity>
         </View>
+        {filteredData.length ? (
         <View style={styles.flatlistContainer}>
           <FlatList
             data={filteredData}
             renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
+            // keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item._id}
             scrollIndicatorInsets={{ color: 'white' }}
             
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
-                colors={["#9Bd35A", "#689F38"]}
+                colors={["green", "#284387"]}
                 tintColor="#FFF"
                 title="Loading..."
                 titleColor="#FFF"
@@ -213,7 +220,28 @@ const Wordslist = () => {
             }
           />
         </View>
-
+        ):(
+          <View style={styles.flatlistContainer}>
+          
+           <Text
+            style={{
+              color: "white",
+              fontSize: 16,
+              fontWeight: "bold",
+              textAlign: "center",marginTop:10
+            }}
+            >Please wait and try to refresh...</Text>
+            <Text
+            style={{
+              color: "white",
+              fontSize: 16,
+              fontWeight: "bold",
+              textAlign: "center",marginTop:10
+            }}
+            >தயவுசெய்து காத்திருந்து புதுப்பிக்க முயற்சிக்கவும்...</Text>
+            </View>
+        
+        )}
         <Modal
           visible={modalVisible}
           transparent={true}
@@ -281,6 +309,7 @@ const Wordslist = () => {
                   }}
                 >
                   <View style={styles.definitionContainer}>
+                    <ScrollView>
                     <Text
                       style={{
                         color: "green",
@@ -290,6 +319,7 @@ const Wordslist = () => {
                       {/* {selectedItem ? selectedItem.tamildefinition : ""} */}
                       {selectedItem ? selectedItem.taMeaning : ""}
                     </Text>
+                    </ScrollView>
                   </View>
 
                   <View style={styles.definitionContainer}>
@@ -387,11 +417,15 @@ const styles = StyleSheet.create({
     margin: 24,
   },
   definitionContainer: {
+    
+    // flex:1/2,
     borderWidth: 1,
     borderColor: "#FFF",
     borderRadius: 8,
     padding: 5,
     width: "78%",
+    maxHeight: '65%',
+    // height:'45%',
     backgroundColor: "#FFF",
   },
   wordtileContainer: {
