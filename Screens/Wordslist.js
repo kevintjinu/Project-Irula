@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect,useRef,useCallback } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -10,10 +10,13 @@ import {
   Modal,
   TextInput,
   SafeAreaView,
-  RefreshControl,PanResponder
+  RefreshControl,PanResponder, Keyboard
 } from "react-native";
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
+import { ScrollView } from "react-native-gesture-handler";
+import { Audio } from 'expo-av';
+
 // import * as Speech from "expo-speech";
 
 
@@ -30,16 +33,22 @@ const Wordslist = () => {
   const [refreshing, setRefreshing] = useState(false);
   const searchInput = useRef(null);
 
+  const [numItemsToRender, setNumItemsToRender] = useState(35);
+
+
   useEffect(() => {
     fetchData();
   }, []);
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
+    
     // setLoading(true);
     axios
       // .get("https://retoolapi.dev/2BDr23/data")
        .get("https://project-irula.azurewebsites.net/api/")
       .then((response) => {
-        setData(response.data);
+        //setData(response.data);
+        const shuffledData = response.data.sort(() => Math.random() - 0.5);
+        setData(shuffledData);
         setFilteredData(response.data);
         // setLoading(false);
         setRefreshing(false);
@@ -49,7 +58,7 @@ const Wordslist = () => {
         // setLoading(false);
         setRefreshing(false);
       });
-  };
+  },[])
 
   const panResponder = useRef(
     PanResponder.create({
@@ -71,9 +80,9 @@ const Wordslist = () => {
     const filtered = data.filter((item) => {
 
       return (
-        (item.enWord && item.enWord.toLowerCase().includes(text.toLowerCase())) ||
+        (item.enWord && item.enWord.toLowerCase().startsWith(text.toLowerCase())) ||
         (item.taWord &&
-          item.taWord.toLowerCase().includes(text.toLowerCase()))
+          item.taWord.toLowerCase().startsWith(text.toLowerCase()))
       );
       // return (
       //   (item.word && item.word.toLowerCase().includes(text.toLowerCase())) ||
@@ -89,9 +98,10 @@ const Wordslist = () => {
     setSearchText("");
     setIsFocused(false);
     setFilteredData(data);
+    Keyboard.dismiss();
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = useCallback(({ item }) => (
     <TouchableOpacity
       style={{
         flex: 1,
@@ -148,7 +158,7 @@ const Wordslist = () => {
         </Text>
       </View>
     </TouchableOpacity>
-  );
+  ),[]);
 
   //   if (loading) {
   //     return <View style={{flex: 1,
@@ -160,7 +170,9 @@ const Wordslist = () => {
   const handleRefresh = () => {
     setRefreshing(true);
     fetchData();
+    handleClearSearch();
   };
+  
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -184,28 +196,35 @@ const Wordslist = () => {
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
             placeholder="Search..."
+            placeholderTextColor="#284387" 
           />
           {isFocused && (
             <TouchableOpacity onPress={handleClearSearch}>
-              <Ionicons name="close" size={24} color="black" />
+              <Ionicons name="close" size={24} color="#284387" />
             </TouchableOpacity>
           )}
           <TouchableOpacity onPress={handleSearch}>
-            <Ionicons name="search" size={24} color="black" />
+            <Ionicons name="search" size={24} color="#284387" />
           </TouchableOpacity>
         </View>
+        {filteredData.length ? (
         <View style={styles.flatlistContainer}>
           <FlatList
-            data={filteredData}
+            //data={filteredData}
+            data={filteredData.slice(0, numItemsToRender)}
             renderItem={renderItem}
-            keyExtractor={(item, index) => index.toString()}
+            // keyExtractor={(item, index) => index.toString()}
+            keyExtractor={(item) => item._id}
             scrollIndicatorInsets={{ color: 'white' }}
-            
+            onEndReached={() => {
+    setNumItemsToRender(numItemsToRender + 35);
+  }}
+  onEndReachedThreshold={0.1}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
                 onRefresh={handleRefresh}
-                colors={["#9Bd35A", "#689F38"]}
+                colors={["green", "#284387"]}
                 tintColor="#FFF"
                 title="Loading..."
                 titleColor="#FFF"
@@ -213,7 +232,28 @@ const Wordslist = () => {
             }
           />
         </View>
-
+        ):(
+          <View style={styles.flatlistContainer}>
+          
+           <Text
+            style={{
+              color: "white",
+              fontSize: 16,
+              fontWeight: "bold",
+              textAlign: "center",marginTop:10
+            }}
+            >Please wait and try to refresh...</Text>
+            <Text
+            style={{
+              color: "white",
+              fontSize: 16,
+              fontWeight: "bold",
+              textAlign: "center",marginTop:10
+            }}
+            >தயவுசெய்து காத்திருந்து புதுப்பிக்க முயற்சிக்கவும்...</Text>
+            </View>
+        
+        )}
         <Modal
           visible={modalVisible}
           transparent={true}
@@ -281,6 +321,7 @@ const Wordslist = () => {
                   }}
                 >
                   <View style={styles.definitionContainer}>
+                    <ScrollView>
                     <Text
                       style={{
                         color: "green",
@@ -290,6 +331,7 @@ const Wordslist = () => {
                       {/* {selectedItem ? selectedItem.tamildefinition : ""} */}
                       {selectedItem ? selectedItem.taMeaning : ""}
                     </Text>
+                    </ScrollView>
                   </View>
 
                   <View style={styles.definitionContainer}>
@@ -319,7 +361,17 @@ const Wordslist = () => {
                   />
                 </View>
               </View>
-              <TouchableOpacity style={{ flex: 1, marginTop: 20 }}>
+              <TouchableOpacity style={{ flex: 1, marginTop: 20 }}
+              onPress={async () => {
+                const soundObject = new Audio.Sound();
+                try {
+                  await soundObject.loadAsync(require('../assets/audio/fire.mp3'));
+                  await soundObject.playAsync();
+                } catch (error) {
+                  console.error('Error playing sound:', error);
+                }
+              }}
+              >
                 <Text
                   style={{
                     fontSize: 24,
@@ -387,11 +439,15 @@ const styles = StyleSheet.create({
     margin: 24,
   },
   definitionContainer: {
+    
+    // flex:1/2,
     borderWidth: 1,
     borderColor: "#FFF",
     borderRadius: 8,
     padding: 5,
     width: "78%",
+    maxHeight: '65%',
+    // height:'45%',
     backgroundColor: "#FFF",
   },
   wordtileContainer: {

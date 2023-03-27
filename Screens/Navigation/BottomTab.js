@@ -15,6 +15,7 @@ function BottomTabs() {
           backgroundColor: "#284387",
           borderBottomWidth: 0,
           borderTopWidth: 0,
+          
         },
         headerTintColor: "#fff",
         headerTitleStyle: {
@@ -39,7 +40,7 @@ function BottomTabs() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ios-home" color={color} size={size} />
           ),
-          tabBarLabel: "Home",
+          tabBarLabel: "Home",headerTitleAlign: "center",
         }}
       />
       <Tab.Screen
