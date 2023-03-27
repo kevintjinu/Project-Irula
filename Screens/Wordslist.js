@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useState, useEffect,useRef } from "react";
+import React, { useState, useEffect,useRef,useCallback } from "react";
 import {
   StyleSheet,
   FlatList,
@@ -31,18 +31,22 @@ const Wordslist = () => {
   const [refreshing, setRefreshing] = useState(false);
   const searchInput = useRef(null);
 
-  
+  const [numItemsToRender, setNumItemsToRender] = useState(35);
+
+
   useEffect(() => {
     fetchData();
   }, []);
-  const fetchData = () => {
+  const fetchData = useCallback(() => {
     
     // setLoading(true);
     axios
       // .get("https://retoolapi.dev/2BDr23/data")
        .get("https://project-irula.azurewebsites.net/api/")
       .then((response) => {
-        setData(response.data);
+        //setData(response.data);
+        const shuffledData = response.data.sort(() => Math.random() - 0.5);
+        setData(shuffledData);
         setFilteredData(response.data);
         // setLoading(false);
         setRefreshing(false);
@@ -52,7 +56,7 @@ const Wordslist = () => {
         // setLoading(false);
         setRefreshing(false);
       });
-  };
+  },[])
 
   const panResponder = useRef(
     PanResponder.create({
@@ -74,9 +78,9 @@ const Wordslist = () => {
     const filtered = data.filter((item) => {
 
       return (
-        (item.enWord && item.enWord.toLowerCase().includes(text.toLowerCase())) ||
+        (item.enWord && item.enWord.toLowerCase().startsWith(text.toLowerCase())) ||
         (item.taWord &&
-          item.taWord.toLowerCase().includes(text.toLowerCase()))
+          item.taWord.toLowerCase().startsWith(text.toLowerCase()))
       );
       // return (
       //   (item.word && item.word.toLowerCase().includes(text.toLowerCase())) ||
@@ -95,7 +99,7 @@ const Wordslist = () => {
     Keyboard.dismiss();
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = useCallback(({ item }) => (
     <TouchableOpacity
       style={{
         flex: 1,
@@ -152,7 +156,7 @@ const Wordslist = () => {
         </Text>
       </View>
     </TouchableOpacity>
-  );
+  ),[]);
 
   //   if (loading) {
   //     return <View style={{flex: 1,
@@ -164,7 +168,9 @@ const Wordslist = () => {
   const handleRefresh = () => {
     setRefreshing(true);
     fetchData();
+    handleClearSearch();
   };
+  
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -202,12 +208,16 @@ const Wordslist = () => {
         {filteredData.length ? (
         <View style={styles.flatlistContainer}>
           <FlatList
-            data={filteredData}
+            //data={filteredData}
+            data={filteredData.slice(0, numItemsToRender)}
             renderItem={renderItem}
             // keyExtractor={(item, index) => index.toString()}
             keyExtractor={(item) => item._id}
             scrollIndicatorInsets={{ color: 'white' }}
-            
+            onEndReached={() => {
+    setNumItemsToRender(numItemsToRender + 35);
+  }}
+  onEndReachedThreshold={0.1}
             refreshControl={
               <RefreshControl
                 refreshing={refreshing}
