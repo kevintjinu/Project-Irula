@@ -10,12 +10,19 @@ import {
   Modal,
   TextInput,
   SafeAreaView,
-  RefreshControl,PanResponder, Keyboard
+  RefreshControl,PanResponder, Keyboard,Dimensions
 } from "react-native";
 import axios from "axios";
+import NetInfo from '@react-native-community/netinfo';
+import CacheStore from 'react-native-cache-store';
 import { Ionicons } from "@expo/vector-icons";
 import { ScrollView } from "react-native-gesture-handler";
 import { Audio } from 'expo-av';
+// import { Modalize } from 'react-native-modalize';
+
+// import { TextInput } from 'react-native-paper';
+import { TextInput as MyTextInput } from 'react-native-paper';
+
 
 // import * as Speech from "expo-speech";
 
@@ -34,31 +41,70 @@ const Wordslist = () => {
   const searchInput = useRef(null);
 
   const [numItemsToRender, setNumItemsToRender] = useState(35);
-
+//   const windowWidth = Dimensions.get('window').width;
+// const windowHeight = Dimensions.get('window').height;
 
   useEffect(() => {
     fetchData();
   }, []);
-  const fetchData = useCallback(() => {
+  // const fetchData = useCallback(() => {
     
-    // setLoading(true);
-    axios
-      // .get("https://retoolapi.dev/2BDr23/data")
-       .get("https://project-irula.azurewebsites.net/api/")
-      .then((response) => {
-        //setData(response.data);
-        const shuffledData = response.data.sort(() => Math.random() - 0.5);
-        setData(shuffledData);
-        setFilteredData(response.data);
-        // setLoading(false);
-        setRefreshing(false);
-      })
-      .catch((error) => {
-        console.error(error);
-        // setLoading(false);
-        setRefreshing(false);
-      });
-  },[])
+  //   // setLoading(true);
+  //   axios
+  //     // .get("https://retoolapi.dev/2BDr23/data")
+  //      .get("https://project-irula.azurewebsites.net/api/")
+  //     .then((response) => {
+  //       //setData(response.data);
+  //       const shuffledData = response.data.sort(() => Math.random() - 0.5);
+  //       setData(shuffledData);
+  //       setFilteredData(response.data);
+  //       // setLoading(false);
+  //       setRefreshing(false);
+  //     })
+  //     .catch((error) => {
+  //       console.error(error);
+  //       // setLoading(false);
+  //       setRefreshing(false);
+  //     });
+  // },[])
+  const fetchData = useCallback(() => {
+    // Check internet connection
+    NetInfo.fetch().then((state) => {
+      if (state.isConnected) {
+        // Fetch data from API
+        axios
+          .get('https://project-irula.azurewebsites.net/api/')
+          .then((response) => {
+            // Cache data using CacheStore
+            CacheStore.set('data', response.data, 3600); // Cache for 1 hour
+            const shuffledData = response.data.sort(() => Math.random() - 0.5);
+            setData(shuffledData);
+            setFilteredData(response.data);
+            setRefreshing(false);
+          })
+          .catch((error) => {
+            console.error(error);
+            setRefreshing(false);
+          });
+      } else {
+        // Get cached data from CacheStore
+        CacheStore.get('data')
+          .then((cachedData) => {
+            const shuffledData = cachedData.sort(() => Math.random() - 0.5);
+            setData(shuffledData);
+            setFilteredData(cachedData);
+            setRefreshing(false);
+          })
+          .catch((error) => {
+            console.error(error);
+            setRefreshing(false);
+          });
+      }
+    });
+  }, []);
+
+ 
+
 
   const panResponder = useRef(
     PanResponder.create({
@@ -120,11 +166,14 @@ const Wordslist = () => {
       }}
     >
       <Image
-        source={require("../assets/icon.png")}
-        style={{ width: 95, height: 78 }}
+        // source={require("../assets/icon.png")}
+        source={{uri: item.picturePath}}
+       
+        // source={{uri: 'https://arizsiddiqui.blob.core.windows.net/project-irula-assets/fire.jpg'}}
+        style={{ width: 95, height: 78,borderRadius:8 }}
       />
       {/* <Image source={{ uri: item.urlToImage }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 16 }} /> */}
-      <View style={{ flex: 1, justifyContent: "center", marginLeft: 5 }}>
+      <View style={{ flex: 1, justifyContent: "center", marginLeft: 10, }}>
         <Text
           style={{
             fontSize: 15,
@@ -146,7 +195,7 @@ const Wordslist = () => {
           style={{ fontSize: 10, color: "#284387", marginBottom: 7 }}
         >
           {/* {item.endefinition} */}
-          {item.enMeaning}
+          {item.lexicalUnit}
         </Text>
         <Text
           numberOfLines={2}
@@ -260,21 +309,26 @@ const Wordslist = () => {
           animationType="slide"
           onRequestClose={() => setModalVisible(false)}
           backdropOpacity={0.3}
+          propagateSwipe={true}
         >
           <View style={{ flex: 1, backgroundColor: "#000000aa" }}>
             <View style={{ flex: 1, backgroundColor: "transparent" }} />
             <View
               style={{
+                
                 flexDirection: "row",
                 justifyContent: "center",
-                marginBottom: 61,
+                marginBottom:20,
               }}
             >
+
               <TouchableOpacity onPress={() => setModalVisible(false)}>
                 <Ionicons name="close-circle-outline" size={70} color="white" />
               </TouchableOpacity>
             </View>
-            <View style={styles.modalContainer}>
+            <ScrollView style={styles.modalContainer}>
+            {/* <TouchableOpacity > */}
+            {/* <ScrollView >  */}
               <View style={styles.titleContainer}>
                 <View style={styles.wordtileContainer}>
                   <Text
@@ -288,6 +342,23 @@ const Wordslist = () => {
                     {/* {selectedItem ? selectedItem.tamilword : ""} */}
                     {selectedItem ? selectedItem.taWord : ""}
                   </Text>
+                  {/* <MyTextInput
+                  style={{
+                    color: "green",
+                    fontSize: 16,
+                    fontWeight: "bold",
+                    textAlign: "center",
+                  }}
+                  
+      label="Tamil Word"
+      value={selectedItem ? selectedItem.taWord : ""}
+      editable={false}
+      mode="outlined"
+      labelStyle={{
+        color: 'green',
+      }}
+  
+    /> */}
                 </View>
 
                 <View style={styles.wordtileContainer}>
@@ -308,33 +379,52 @@ const Wordslist = () => {
                 style={{
                   flexDirection: "row",
 
-                  justifyContent: "space-evenly",
+                  justifyContent: "space-between",
 
-                  marginTop: 23,height:320
+                  marginTop: 23,
+                  //height:320, 
+                  height: Dimensions.get('window').height*.5,
+                  //backgroundColor: "pink",
                 }}
               >
                 <View
                   style={{
-                    flex: 1,
+                    // flex: 1,
                     flexDirection: "column",
                     justifyContent: "space-around",
+                   // backgroundColor: "red",
+                    width: "48%",
                   }}
                 >
                   <View style={styles.definitionContainer}>
                     <ScrollView>
                     <Text
                       style={{
-                        color: "green",
+                        color: "#284387",
                         fontSize: 14,
                       }}
                     >
                       {/* {selectedItem ? selectedItem.tamildefinition : ""} */}
-                      {selectedItem ? selectedItem.taMeaning : ""}
+                      {selectedItem ? selectedItem.grammaticalInfo : ""}
                     </Text>
                     </ScrollView>
                   </View>
 
                   <View style={styles.definitionContainer}>
+                  <ScrollView>
+                    <Text
+                      style={{
+                        color: "green",
+                        fontSize: 14,
+                      }}
+                    >
+                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                      {selectedItem ? selectedItem.taMeaning : ""}
+                    </Text>
+                    </ScrollView>
+                  </View>
+                  <View style={styles.definitionContainer}>
+                  <ScrollView>
                     <Text
                       style={{
                         color: "#284387",
@@ -344,9 +434,33 @@ const Wordslist = () => {
                       {/* {selectedItem ? selectedItem.endefinition : ""} */}
                       {selectedItem ? selectedItem.enMeaning : ""}
                     </Text>
+                    </ScrollView>
+                  </View>
+                  <View style={styles.definitionContainer}>
+                  <ScrollView>
+                    <Text
+                      style={{
+                        color: "green",
+                        fontSize: 14,
+                      }}
+                    >
+                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                      {selectedItem ? selectedItem.irulaWord : ""}
+                    </Text>
+                    </ScrollView>
                   </View>
                 </View>
 
+                <View
+                  style={{
+                    // flex: 1,
+                    flexDirection: "column",
+                    justifyContent: "space-around",
+                   // backgroundColor: "red",
+                    width: "48%", 
+                    alignItems: "flex-end",
+                  }}
+                >
                 <View
                   style={{
                     width: 128,
@@ -354,18 +468,67 @@ const Wordslist = () => {
                     borderRadius: 8,
                   }}
                 >
-                  <Image
+                 <Image
                   
-                    style={{ width: 128, height: 238, borderRadius: 8 }}
-                    source={require("../assets/pictures/fire.png")}
-                  />
+                  style={{ width: 128, height: 238, borderRadius: 8 }}
+                  //source={require("../assets/pictures/fire.png")}
+                //  source={{uri: 'https://arizsiddiqui.blob.core.windows.net/project-irula-assets/fire.jpg'}}
+                  source={{ uri: selectedItem ? selectedItem.picturePath : ""}}
+                />
+                </View>
+                <View style={styles.definitionContainer}>
+                  <ScrollView>
+                    <Text
+                      style={{
+                        color: "green",
+                        fontSize: 14,
+                      }}
+                    >
+                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                      {selectedItem ? selectedItem.irulaWord : ""}
+                    </Text>
+                    </ScrollView>
+                  </View>
+                  <View style={styles.definitionContainer}>
+                  <ScrollView>
+                    <Text
+                      style={{
+                        color: "red",
+                        fontSize: 14,
+                      }}
+                    >
+                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                      {selectedItem ? selectedItem.lexicalUnit : ""}
+                    </Text>
+                    </ScrollView>
+                  </View>
                 </View>
               </View>
-              <TouchableOpacity style={{ flex: 1, marginTop: 20 }}
+              {/* <View style={styles.definitionContainer}>
+                    <Text
+                      style={{
+                        color: "#284387",
+                        fontSize: 14,
+                      }}
+                    > */}
+                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                      {/* {selectedItem ? selectedItem.lexicalUnit : "lexicalUnit"} */}
+{/* </Text> */}
+                  {/* </View> */}
+              <TouchableOpacity style={{ flex: 1, marginTop: 20,width:"100%",backgroundColor: "#4B639D", 
+                    
+                    borderRadius: 10,}}
               onPress={async () => {
                 const soundObject = new Audio.Sound();
                 try {
-                  await soundObject.loadAsync(require('../assets/audio/fire.mp3'));
+                  await soundObject.loadAsync(
+                   // require('../assets/audio/fire.mp3')
+                   {
+                    //uri: "https://arizsiddiqui.blob.core.windows.net/project-irula-assets/fire.mp3",
+                    uri: selectedItem ? selectedItem.audioPath : ""
+                  }
+                    );
+
                   await soundObject.playAsync();
                 } catch (error) {
                   console.error('Error playing sound:', error);
@@ -378,16 +541,21 @@ const Wordslist = () => {
                     padding: 10,
                     borderWidth: 2,
                     borderColor: "white",
-                    backgroundColor: "#4B639D",
+                    
                     color: "white",
                     borderRadius: 10,
                     textAlign: "center",
                   }}
                 >
-                  Hear this word
+<Ionicons name="ios-volume-high" size={24} color="white" />
+                       Hear this word
+                  
                 </Text>
-              </TouchableOpacity>
-            </View>
+
+              </TouchableOpacity>      
+              {/* </ScrollView>      */}
+            {/* </TouchableOpacity> */}
+            </ScrollView>
           </View>
         </Modal>
       </View>
@@ -445,8 +613,9 @@ const styles = StyleSheet.create({
     borderColor: "#FFF",
     borderRadius: 8,
     padding: 5,
-    width: "78%",
-    maxHeight: '65%',
+    width: "100%",
+    //maxHeight: '65%',
+    maxHeight: Dimensions.get('window').height*0.15,
     // height:'45%',
     backgroundColor: "#FFF",
   },
@@ -460,18 +629,23 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFF",
   },
   modalContainer: {
-    height: "62%",
+   
+    //height: "55%",
+    height: Dimensions.get('window').height*0.65,
+   // maxHeight: 500,
+    // height: deviceHeight * 0.55,
     backgroundColor: "#284387",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 25,
-    paddingVertical: 15,
+    //paddingVertical: 15,
   },
   titleContainer: {
     width: "100%",
     flexDirection: "row",
     justifyContent: "space-between",
-    marginTop: 20,
+    marginTop: 35,
+    //  marginVertical:15
   },
   logoContainer: {
     alignItems: 'center',
