@@ -44,13 +44,13 @@ function BottomTabs() {
         }}
       />
       <Tab.Screen
-        name="Search"
+        name="Glossary"
         component={Search}
         options={{
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ios-search" color={color} size={size} />
           ),
-          tabBarLabel: "Search",
+          tabBarLabel: "Glossary",
         }}
       />
     </Tab.Navigator>
