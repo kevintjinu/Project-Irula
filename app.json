@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "irula_project",
-    "slug": "irula_project",
+    "name": "IRULA",
+    "slug": "IRULA",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,9 +10,6 @@
       "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
     },
     "assetBundlePatterns": [
       "**/*"
@@ -23,17 +20,16 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
+        "backgroundColor": "#ffffff"
       },
-      
-      "package": "com.kevinjinu.irula_project"
+      "package": "com.kevinjinu.IRULA"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "64c099cc-4d22-4dbb-b525-1f1d83d398ce"
+        "projectId": "7e9e78cc-a62b-4b0d-a1c5-1a605e10ca59"
       }
     }
   }

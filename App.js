@@ -1,7 +1,7 @@
+import 'react-native-gesture-handler';
 import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import StackNav from "./Screens/Navigation/StackNav";
-import BottomTabs from "./Screens/Navigation/BottomTab";
+import BottomTabs from "./src/nav/BottomTabs";
 function App() {
   return (
     <NavigationContainer>
