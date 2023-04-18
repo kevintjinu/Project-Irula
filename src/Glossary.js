@@ -36,7 +36,7 @@ export default function Glossary() {
         return (
           <View style={styles.wordContainer}>
             <Text style={styles.wordEn}>{item.enWord}</Text>
-            <Text style={styles.wordMeaning}>{item.category}</Text>
+            <Text style={styles.category}>{item.category}</Text>
             <Text style={styles.wordMeaning}>{item.enMeaning}</Text>
 
           </View>
@@ -161,10 +161,18 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         marginBottom: 8,
+        color:'#284387'
       },
       wordMeaning: {
         fontSize: 16,
-        color: '#777',
+        color: 'black',
+        
+      },
+      category:{
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#000000',
+        textTransform :"capitalize"
       },
       scrollbarContainer: {
         position: 'absolute',

@@ -23,42 +23,23 @@ import { Audio } from 'expo-av';
 export default function Home() {
 
     const [data, setData] = useState([]);
-    // const [loading, setLoading] = useState(true);
+    
     const [modalVisible, setModalVisible] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-    // const [searchTerm, setSearchTerm] = useState("");
+  
     const [filteredData, setFilteredData] = useState([]);
     const [searchText, setSearchText] = useState("");
-    // const [isRecording, setIsRecording] = useState(false);
+    const [numItemsToRender, setNumItemsToRender] = useState(35);
     const [isFocused, setIsFocused] = useState(false);
     const [refreshing, setRefreshing] = useState(false);
     const searchInput = useRef(null);
   
-    const [numItemsToRender, setNumItemsToRender] = useState(35);
+    
 
     useEffect(() => {
         fetchData();
       }, []);
-// const fetchData = useCallback(() => {
-    
-//     // setLoading(true);
-//     axios
-//       // .get("https://retoolapi.dev/2BDr23/data")
-//        .get("https://project-irula.azurewebsites.net/api/")
-//       .then((response) => {
-//         //setData(response.data);
-//         const shuffledData = response.data.sort(() => Math.random() - 0.5);
-//         setData(shuffledData);
-//         setFilteredData(response.data);
-//         // setLoading(false);
-//         setRefreshing(false);
-//       })
-//       .catch((error) => {
-//         console.error(error);
-//         // setLoading(false);
-//         setRefreshing(false);
-//       });
-//   },[])
+
 const fetchData = useCallback(() => {
     // Check internet connection
     NetInfo.fetch().then((state) => {
@@ -112,11 +93,7 @@ const fetchData = useCallback(() => {
         (item.taWord &&
           item.taWord.toLowerCase().startsWith(text.toLowerCase()))
       );
-      // return (
-      //   (item.word && item.word.toLowerCase().includes(text.toLowerCase())) ||
-      //   (item.tamilword &&
-      //     item.tamilword.toLowerCase().includes(text.toLowerCase()))
-      // );
+     
     });
     setFilteredData(filtered);
     setSearchText(text);
@@ -136,7 +113,6 @@ const fetchData = useCallback(() => {
         flexDirection: "row",
         padding: 16,
         alignItems: "center",
-      //  marginTop: 30,
         margin: 16,
         backgroundColor: "white",
         borderRadius: 20,
