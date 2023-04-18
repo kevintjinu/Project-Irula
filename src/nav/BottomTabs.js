@@ -51,7 +51,7 @@ function BottomTabs() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ios-search" color={color} size={size} />
           ),
-          tabBarLabel: "Glossary",
+          tabBarLabel: "Glossary",headerTitleAlign: "center",
         }}
       />
     </Tab.Navigator>
