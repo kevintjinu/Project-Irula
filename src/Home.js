@@ -34,20 +34,26 @@ export default function Home() {
     const [refreshing, setRefreshing] = useState(false);
     const searchInput = useRef(null);
   
-    
+   
 
     useEffect(() => {
         fetchData();
       }, []);
 
+      
+      
 const fetchData = useCallback(() => {
+  
     // Check internet connection
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         // Fetch data from API
+        const startTime = Date.now();
         axios
           .get('https://project-irula.azurewebsites.net/api/')
           .then((response) => {
+            
+            
             // Cache data using AsyncStorage
             const data = response.data;
             AsyncStorage.setItem('data', JSON.stringify(data));
@@ -55,6 +61,8 @@ const fetchData = useCallback(() => {
             setData(shuffledData);
             setFilteredData(data);
             setRefreshing(false);
+            const endTime = Date.now();
+          console.log(`API took ${endTime - startTime} ms to render`);
           })
           .catch((error) => {
             console.error(error);
@@ -82,10 +90,12 @@ const fetchData = useCallback(() => {
   
 
   const handleSearch = (text) => {
+    console.log("handleSearch function started");
     if (typeof text !== "string") {
+      console.log("Invalid text type");
       return;
     }
-
+    const startTime = performance.now();
     const filtered = data.filter((item) => {
 
       return (
@@ -95,6 +105,8 @@ const fetchData = useCallback(() => {
       );
      
     });
+    const endTime = performance.now();
+  console.log(`handleSearch function took ${endTime - startTime} milliseconds to execute`);
     setFilteredData(filtered);
     setSearchText(text);
     setIsFocused(true);
@@ -336,7 +348,7 @@ const fetchData = useCallback(() => {
                   style={{
                     // flex: 1,
                     flexDirection: "column",
-                    justifyContent: "space-around",
+                    justifyContent: "space-between",
                    // backgroundColor: "red",
                     width: "48%",
                   }}
@@ -400,12 +412,25 @@ const fetchData = useCallback(() => {
                   style={{
                     // flex: 1,
                     flexDirection: "column",
-                    justifyContent: "space-around",
-                   // backgroundColor: "red",
+                    justifyContent: "space-between",
+                   //backgroundColor: "red",
                     width: "48%", 
-                    alignItems: "flex-end",
+                    alignItems: "center",
                   }}
                 >
+                  <View style={styles.definitionContainer}>
+                  <ScrollView>
+                    <Text
+                      style={{
+                        color: "green",
+                        fontSize: 14,textTransform :"capitalize"
+                      }}
+                    >
+                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                      {selectedItem ? selectedItem.category : ""}
+                    </Text>
+                    </ScrollView>
+                  </View>
                 <View
                   style={{
                     width: 128,
@@ -421,19 +446,7 @@ const fetchData = useCallback(() => {
                   source={{ uri: selectedItem ? selectedItem.picturePath : ""}}
                 />
                 </View>
-                <View style={styles.definitionContainer}>
-                  <ScrollView>
-                    <Text
-                      style={{
-                        color: "green",
-                        fontSize: 14,
-                      }}
-                    >
-                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
-                      {selectedItem ? selectedItem.irulaWord : ""}
-                    </Text>
-                    </ScrollView>
-                  </View>
+                
                   <View style={styles.definitionContainer}>
                   <ScrollView>
                     <Text

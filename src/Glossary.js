@@ -32,13 +32,26 @@ export default function Glossary() {
         .catch((error) => console.error(error));
     }, []);
 
-      const renderItem = ({ item }) => {
+      const renderItem = ({ item,index }) => {
+        const itemNumber = index + 1;
         return (
           <View style={styles.wordContainer}>
-            <Text style={styles.wordEn}>{item.enWord}</Text>
+            <View style={{flexDirection: "row",
+        justifyContent: "space-between", marginBottom: 8,}}>
+            <Text style={styles.wordEn}>{`${itemNumber}. `}{item.enWord}</Text>
+            <Text style={styles.wordTn}>{item.irulaWord}</Text>
+            </View>
+            <View style={{flexDirection: "row",
+        justifyContent: "space-between",marginBottom: 8,}}>
+        <Text style={styles.category}>{item.lexicalUnit}</Text>
             <Text style={styles.category}>{item.category}</Text>
+            </View>
+            <View style={{flexDirection: "column",
+        justifyContent: "space-between", }}>
             <Text style={styles.wordMeaning}>{item.enMeaning}</Text>
 
+            </View>
+           
           </View>
         );
       };
@@ -160,8 +173,14 @@ const styles = StyleSheet.create({
       wordEn: {
         fontSize: 18,
         fontWeight: 'bold',
-        marginBottom: 8,
+        
         color:'#284387'
+      },
+      wordTn: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        
+        color:'green'
       },
       wordMeaning: {
         fontSize: 16,
