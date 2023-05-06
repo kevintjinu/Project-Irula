@@ -5,8 +5,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, ScrollView, FlatList, StyleSheet,TextInput,TouchableOpacity,RefreshControl,PanResponder, Keyboard,Dimensions   } from 'react-native';
 import axios from 'axios';
 import { Ionicons } from "@expo/vector-icons";
+import { Audio } from 'expo-av';
 
-export default function Glossary() {
+export default function Glossary(props) {
 
     const [words, setWords] = useState([]);
     const [selectedLetter, setSelectedLetter] = useState(null);
@@ -35,7 +36,26 @@ export default function Glossary() {
       const renderItem = ({ item,index }) => {
         const itemNumber = index + 1;
         return (
-          <View style={styles.wordContainer}>
+          <TouchableOpacity
+          onPress={async () => {
+            const soundObject = new Audio.Sound();
+            try {
+              await soundObject.loadAsync(
+               // require('../assets/audio/fire.mp3')
+               {
+                //uri: "https://arizsiddiqui.blob.core.windows.net/project-irula-assets/fire.mp3",
+                
+                uri: item.audioPath
+              }
+                );
+
+              await soundObject.playAsync();
+            } catch (error) {
+              console.error('Error playing sound:', error);
+            }
+          }}
+          >
+<View style={styles.wordContainer}>
             <View style={{flexDirection: "row",
         justifyContent: "space-between", marginBottom: 8,}}>
             <Text style={styles.wordEn}>{`${itemNumber}. `}{item.enWord}</Text>
@@ -53,15 +73,21 @@ export default function Glossary() {
             </View>
            
           </View>
+          </TouchableOpacity>
+          
+
         );
       };
 
 
       const handleScroll = (event) => {
         const { contentOffset, contentSize, layoutMeasurement } = event.nativeEvent;
+        // const scrollFraction = contentOffset.y / (contentSize.height - layoutMeasurement.height);
+        // const index = Math.floor(scrollFraction * words.length);
+        // const item = words[index];
         const scrollFraction = contentOffset.y / (contentSize.height - layoutMeasurement.height);
-        const index = Math.floor(scrollFraction * words.length);
-        const item = words[index];
+const index = Math.floor(scrollFraction * filteredData.length);
+const item = filteredData[index];
         if (item) {
           const letter = item.enWord[0].toLowerCase();
           if (letter !== scrollbarLetter) {
@@ -71,11 +97,32 @@ export default function Glossary() {
         }
       };
 
-      const handleLetterPress = (letter) => {
-        setSelectedLetter(letter);
-        const index = words.findIndex((item) => item.enWord.toLowerCase().startsWith(letter));
-        flatListRef.current.scrollToIndex({ animated: true, index });
-      };
+      // const handleLetterPress = (letter) => {
+      //   setSelectedLetter(letter);
+      //   const index = words.findIndex((item) => item.enWord.toLowerCase().startsWith(letter));
+      //   flatListRef.current.scrollToIndex({ animated: true, index });
+      // };
+    //   const handleLetterPress = (letter) => {
+    //     setSelectedLetter(letter);
+    //     const index = words.findIndex((item) => item.enWord.toLowerCase().startsWith(letter));
+    //     if (index !== -1) {
+    //       const index = filteredData.findIndex((filteredItem) => filteredItem._id === item._id);
+    //        flatListRef.current.scrollToIndex({ animated: true, index });
+    //     }
+    //  };
+    const handleLetterPress = (letter) => {
+      setSelectedLetter(letter);
+      const indexInWords = words.findIndex((item) => item.enWord.toLowerCase().startsWith(letter));
+      if (indexInWords !== -1) {
+        const item = words[indexInWords];
+        const indexInFilteredData = filteredData.findIndex((filteredItem) => filteredItem._id === item._id);
+        if (indexInFilteredData !== -1) {
+          flatListRef.current.scrollToIndex({ animated: true, index: indexInFilteredData });
+        }
+      }
+    };
+    
+     
     
       const alphabetList = words.reduce((acc, word) => {
         const firstLetter = word.enWord[0].toLowerCase();
@@ -85,6 +132,8 @@ export default function Glossary() {
         return acc;
       }, []);
 
+
+      
       const handleSearch = (text) => {
         if (typeof text !== "string") {
           return;
@@ -129,16 +178,48 @@ export default function Glossary() {
         <Ionicons name="search" size={24} color="#284387" />
       </TouchableOpacity>
          </View>
-     
+         {filteredData.length ? (
       <FlatList
         ref={flatListRef}
        data={filteredData}
         renderItem={renderItem}
         keyExtractor={(item) => item._id}
         onScroll={handleScroll}
+        initialScrollIndex={props.activeIndex}  
+        onScrollToIndexFailed={info => {
+          const wait = new Promise(resolve => setTimeout(resolve, 500));
+          wait.then(() => {
+            flatListRef.current?.scrollToIndex({ index: info.index, animated: true });
+          });
+        }}
       />
+      ):(
+        <View style={styles.flatlistContainer}>
+        
+         <Text
+          style={{
+            color: "white",
+            fontSize: 16,
+            fontWeight: "bold",
+            textAlign: "center",marginTop:10
+          }}
+          >Please wait...</Text>
+          
+          <Text
+          style={{
+            color: "white",
+            fontSize: 16,
+            fontWeight: "bold",
+            textAlign: "center",marginTop:10
+          }}
+          >தயவுசெய்து காத்திருக்கவும்...</Text>
+          </View>
+      
+      )}
+     
       <View style={styles.scrollbarContainer}>
-        {alphabetList.map((letter, index) => (
+        {/* {alphabetList.map((letter, index) => ( */}
+        {alphabetList && alphabetList.map((letter, index) => (
           <Text
             key={index}
             style={[
@@ -177,7 +258,7 @@ const styles = StyleSheet.create({
         color:'#284387'
       },
       wordTn: {
-        fontSize: 18,
+        fontSize: 12,
         fontWeight: 'bold',
         
         color:'green'

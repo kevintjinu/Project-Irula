@@ -19,6 +19,7 @@ import NetInfo from '@react-native-community/netinfo';
 // import CacheStore from 'react-native-cache-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Audio } from 'expo-av';
+import * as FileSystem from 'expo-file-system';
 
 export default function Home() {
 
@@ -34,7 +35,9 @@ export default function Home() {
     const [refreshing, setRefreshing] = useState(false);
     const searchInput = useRef(null);
   
-   
+    const [pageIndex, setPageIndex] = useState(0);
+    const [pageSize, setPageSize] = useState(10);
+    
 
     useEffect(() => {
         fetchData();
@@ -48,7 +51,8 @@ const fetchData = useCallback(() => {
     NetInfo.fetch().then((state) => {
       if (state.isConnected) {
         // Fetch data from API
-        const startTime = Date.now();
+        const startTime1 = Date.now();
+        const startTime = performance.now();
         axios
           .get('https://project-irula.azurewebsites.net/api/')
           .then((response) => {
@@ -61,8 +65,10 @@ const fetchData = useCallback(() => {
             setData(shuffledData);
             setFilteredData(data);
             setRefreshing(false);
-            const endTime = Date.now();
-          console.log(`API took ${endTime - startTime} ms to render`);
+            const endTime1 = Date.now();
+            console.log(`API took ${endTime1 - startTime1} ms to render`);
+            const endTime = performance.now();
+            console.log(`API took ${endTime - startTime} ms to render`);
           })
           .catch((error) => {
             console.error(error);
@@ -136,13 +142,13 @@ const fetchData = useCallback(() => {
       }}
     >
       <Image
-        // source={require("../assets/icon.png")}
-        source={{uri: item.picturePath}}
-       
-        // source={{uri: 'https://arizsiddiqui.blob.core.windows.net/project-irula-assets/fire.jpg'}}
+        
+      source={{uri: item.picturePath}}
+      //  source={require("../assets/ash.jpg")}
+    
         style={{ width: 95, height: 78,borderRadius:8 }}
       />
-      {/* <Image source={{ uri: item.urlToImage }} style={{ width: 50, height: 50, borderRadius: 25, marginRight: 16 }} /> */}
+      
       <View style={{ flex: 1, justifyContent: "center", marginLeft: 10, }}>
         <Text
           style={{
@@ -152,11 +158,11 @@ const fetchData = useCallback(() => {
             fontWeight: "bold",
           }}
         >
-          {/* {item.word} */}
+          
           {item.enWord}
         </Text>
         <Text style={{ fontSize: 12, color: "green", marginBottom: 7 }}>
-          {/* {item.tamilword} */}
+          
           {item.taWord}
         </Text>
         <Text
@@ -164,7 +170,7 @@ const fetchData = useCallback(() => {
           ellipsizeMode="tail"
           style={{ fontSize: 10, color: "#284387", marginBottom: 7 }}
         >
-          {/* {item.endefinition} */}
+         
           {item.lexicalUnit}
         </Text>
         <Text
@@ -172,7 +178,7 @@ const fetchData = useCallback(() => {
           ellipsizeMode="tail"
           style={{ fontSize: 10, color: "green", marginBottom: 7 }}
         >
-          {/* {item.tamildefinition} */}
+          
           {item.taMeaning}
         </Text>
       </View>
@@ -247,7 +253,7 @@ const fetchData = useCallback(() => {
               fontWeight: "bold",
               textAlign: "center",marginTop:10
             }}
-            >Please wait and try to refresh...</Text>
+            >Please wait...</Text>
             
             <Text
             style={{
@@ -256,7 +262,7 @@ const fetchData = useCallback(() => {
               fontWeight: "bold",
               textAlign: "center",marginTop:10
             }}
-            >தயவுசெய்து காத்திருந்து புதுப்பிக்க முயற்சிக்கவும்...</Text>
+            >தயவுசெய்து காத்திருக்கவும்...</Text>
             </View>
         
         )}
@@ -284,8 +290,7 @@ const fetchData = useCallback(() => {
               </TouchableOpacity>
             </View>
             <ScrollView style={styles.modalContainer}>
-            {/* <TouchableOpacity > */}
-            {/* <ScrollView >  */}
+            
               <View style={styles.titleContainer}>
                 <View style={styles.wordtileContainer}>
                   <Text
@@ -296,26 +301,10 @@ const fetchData = useCallback(() => {
                       textAlign: "center",
                     }}
                   >
-                    {/* {selectedItem ? selectedItem.tamilword : ""} */}
+                    
                     {selectedItem ? selectedItem.taWord : ""}
                   </Text>
-                  {/* <MyTextInput
-                  style={{
-                    color: "green",
-                    fontSize: 16,
-                    fontWeight: "bold",
-                    textAlign: "center",
-                  }}
                   
-      label="Tamil Word"
-      value={selectedItem ? selectedItem.taWord : ""}
-      editable={false}
-      mode="outlined"
-      labelStyle={{
-        color: 'green',
-      }}
-  
-    /> */}
                 </View>
 
                 <View style={styles.wordtileContainer}>
@@ -327,7 +316,7 @@ const fetchData = useCallback(() => {
                       textAlign: "center",
                     }}
                   >
-                    {/* {selectedItem ? selectedItem.word : ""} */}
+                   
                     {selectedItem ? selectedItem.enWord : ""}
                   </Text>
                 </View>
@@ -339,17 +328,17 @@ const fetchData = useCallback(() => {
                   justifyContent: "space-between",
 
                   marginTop: 23,
-                  //height:320, 
+                  
                   height: Dimensions.get('window').height*.5,
-                  //backgroundColor: "pink",
+                 
                 }}
               >
                 <View
                   style={{
-                    // flex: 1,
+                    
                     flexDirection: "column",
                     justifyContent: "space-between",
-                   // backgroundColor: "red",
+                  
                     width: "48%",
                   }}
                 >
@@ -361,7 +350,7 @@ const fetchData = useCallback(() => {
                         fontSize: 14,
                       }}
                     >
-                      {/* {selectedItem ? selectedItem.tamildefinition : ""} */}
+                      
                       {selectedItem ? selectedItem.grammaticalInfo : ""}
                     </Text>
                     </ScrollView>
@@ -375,7 +364,7 @@ const fetchData = useCallback(() => {
                         fontSize: 14,
                       }}
                     >
-                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                      
                       {selectedItem ? selectedItem.taMeaning : ""}
                     </Text>
                     </ScrollView>
@@ -388,7 +377,7 @@ const fetchData = useCallback(() => {
                         fontSize: 14,
                       }}
                     >
-                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                      
                       {selectedItem ? selectedItem.enMeaning : ""}
                     </Text>
                     </ScrollView>
@@ -401,7 +390,7 @@ const fetchData = useCallback(() => {
                         fontSize: 14,
                       }}
                     >
-                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                     
                       {selectedItem ? selectedItem.irulaWord : ""}
                     </Text>
                     </ScrollView>
@@ -410,10 +399,10 @@ const fetchData = useCallback(() => {
 
                 <View
                   style={{
-                    // flex: 1,
+                   
                     flexDirection: "column",
                     justifyContent: "space-between",
-                   //backgroundColor: "red",
+                   
                     width: "48%", 
                     alignItems: "center",
                   }}
@@ -426,7 +415,7 @@ const fetchData = useCallback(() => {
                         fontSize: 14,textTransform :"capitalize"
                       }}
                     >
-                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                     
                       {selectedItem ? selectedItem.category : ""}
                     </Text>
                     </ScrollView>
@@ -441,8 +430,7 @@ const fetchData = useCallback(() => {
                  <Image
                   
                   style={{ width: 128, height: 238, borderRadius: 8 }}
-                  //source={require("../assets/pictures/fire.png")}
-                //  source={{uri: 'https://arizsiddiqui.blob.core.windows.net/project-irula-assets/fire.jpg'}}
+                //  source={require("../assets/ash.jpg")}
                   source={{ uri: selectedItem ? selectedItem.picturePath : ""}}
                 />
                 </View>
@@ -455,24 +443,14 @@ const fetchData = useCallback(() => {
                         fontSize: 14,
                       }}
                     >
-                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
+                     
                       {selectedItem ? selectedItem.lexicalUnit : ""}
                     </Text>
                     </ScrollView>
                   </View>
                 </View>
               </View>
-              {/* <View style={styles.definitionContainer}>
-                    <Text
-                      style={{
-                        color: "#284387",
-                        fontSize: 14,
-                      }}
-                    > */}
-                      {/* {selectedItem ? selectedItem.endefinition : ""} */}
-                      {/* {selectedItem ? selectedItem.lexicalUnit : "lexicalUnit"} */}
-{/* </Text> */}
-                  {/* </View> */}
+             
               <TouchableOpacity style={{ flex: 1, marginTop: 20,width:"100%",backgroundColor: "#4B639D", 
                     
                     borderRadius: 10,}}
@@ -480,9 +458,9 @@ const fetchData = useCallback(() => {
                 const soundObject = new Audio.Sound();
                 try {
                   await soundObject.loadAsync(
-                   // require('../assets/audio/fire.mp3')
+                  
                    {
-                    //uri: "https://arizsiddiqui.blob.core.windows.net/project-irula-assets/fire.mp3",
+                    
                     uri: selectedItem ? selectedItem.audioPath : ""
                   }
                     );
@@ -511,8 +489,7 @@ const fetchData = useCallback(() => {
                 </Text>
 
               </TouchableOpacity>      
-              {/* </ScrollView>      */}
-            {/* </TouchableOpacity> */}
+              
             </ScrollView>
           </View>
         </Modal>
