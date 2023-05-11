@@ -1,9 +1,10 @@
-import 'react-native-gesture-handler';
+import "react-native-gesture-handler";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import Home from "../Home";
 import Glossary from "../Glossary";
+import AboutScreen from "../About";
 
 const Tab = createBottomTabNavigator();
 
@@ -16,7 +17,6 @@ function BottomTabs() {
           backgroundColor: "#284387",
           borderBottomWidth: 0,
           borderTopWidth: 0,
-          
         },
         headerTintColor: "#fff",
         headerTitleStyle: {
@@ -41,7 +41,8 @@ function BottomTabs() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ios-home" color={color} size={size} />
           ),
-          tabBarLabel: "Home",headerTitleAlign: "center",
+          tabBarLabel: "Home",
+          headerTitleAlign: "center",
         }}
       />
       <Tab.Screen
@@ -51,7 +52,19 @@ function BottomTabs() {
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="ios-search" color={color} size={size} />
           ),
-          tabBarLabel: "Glossary",headerTitleAlign: "center",
+          tabBarLabel: "Glossary",
+          headerTitleAlign: "center",
+        }}
+      />
+      <Tab.Screen
+        name="About"
+        component={AboutScreen}
+        options={{
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="ios-information-circle" color={color} size={size} />
+          ),
+          tabBarLabel: "About",
+          headerTitleAlign: "center",
         }}
       />
     </Tab.Navigator>
