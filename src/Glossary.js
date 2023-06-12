@@ -27,7 +27,7 @@ export default function Glossary(props) {
 
   useEffect(() => {
     axios
-      .get("https://project-irula.azurewebsites.net/api/")
+      .get("https://learnirula.azurewebsites.net/api/") //https://learnirula.azurewebsites.net/api/
       .then((response) => {
         const sortedWords = response.data.sort((a, b) =>
           a.enWord.localeCompare(b.enWord, undefined, {

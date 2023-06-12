@@ -48,7 +48,7 @@ export default function Home() {
         const startTime1 = Date.now();
         const startTime = performance.now();
         axios
-          .get("https://project-irula.azurewebsites.net/api/")
+          .get("https://learnirula.azurewebsites.net/api/") //https://learnirula.azurewebsites.net/api/
           .then((response) => {
             // Cache data using AsyncStorage
             const data = response.data;
